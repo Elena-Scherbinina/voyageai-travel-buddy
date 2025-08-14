@@ -329,4 +329,4 @@ with gr.Blocks(title="Travel Buddy AI") as demo:
         outputs=[img_section, btn_img_top]
     )
 
-demo.launch(share=False, debug=True)
+demo.launch(share=True, debug=True)
