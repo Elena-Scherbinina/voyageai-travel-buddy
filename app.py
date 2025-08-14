@@ -97,30 +97,36 @@ def _ensure_days(text, place, days):
 
 
 
+def _truncate_to_days(text, days):
+    chunks = re.split(r'(?m)^(### Day \d+)\s*', text)
+    out, count = [], 0
+    for i in range(1, len(chunks), 2):
+        count += 1
+        if count > days:
+            break
+        out.append(chunks[i] + chunks[i+1])
+    return "".join(out).strip() if out else text
+
+
 def make_itinerary(place: str, days: int):
-    """Calls the chat model and returns a clean Markdown itinerary (with graceful fallback)."""
     days = int(days)
     user_msg = (
         f"Destination: {place}\n"
         f"Days: {days}\n"
+        f"Return exactly {days} day sections — do NOT include extra days.\n"
         "Include Morning, Lunch, Afternoon, Evening, and one Backup per day.\n"
         "Return ONLY the itinerary in Markdown — no extra explanation."
     )
 
     try:
         resp = client.chat_completion(
-            messages=[
-                {"role": "system", "content": SYSTEM},
-                {"role": "user", "content": user_msg},
-            ],
-            max_tokens=900,
-            temperature=0.7,
+            messages=[{"role":"system","content":SYSTEM},
+                      {"role":"user","content":user_msg}],
+            max_tokens=900, temperature=0.7,
         )
         md_text = (resp.choices[0].message["content"] or "").strip()
         status_text = "✅ Done. You can now generate images (if enabled)."
     except Exception as e:
-        # Fallback: deterministic template
-        print(f"⚠️ Using fallback itinerary (error: {e})")
         sections = []
         for d in range(1, days + 1):
             sections.append(
@@ -135,13 +141,13 @@ def make_itinerary(place: str, days: int):
         md_text = "---\n\n".join(sections)
         status_text = "⚠️ Credits exceeded — showing fallback itinerary."
 
-    # If the model echoed instructions, trim to first day header
+    # Now post-process the text
     start = md_text.find("### Day")
     if start != -1:
         md_text = md_text[start:]
-
+    md_text = _truncate_to_days(md_text, days)
     md_text = _ensure_days(md_text, place, days)
-    
+
     return tidy_markdown(md_text), status_text
 
 
