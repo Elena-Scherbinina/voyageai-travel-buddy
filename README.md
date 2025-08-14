@@ -1,6 +1,6 @@
 ---
 title: Trip Planning Assistant
-emoji: 🔥
+emoji:  🔥
 colorFrom: pink
 colorTo: indigo
 sdk: gradio
