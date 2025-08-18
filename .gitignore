@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.dist-info/
+build/
+dist/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Jupyter/Colab
+.ipynb_checkpoints/
+
+# Editors/OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Env & secrets
+.env
+.env.*
+*.env
+secrets.*
