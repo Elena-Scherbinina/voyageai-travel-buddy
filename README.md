@@ -22,6 +22,7 @@ python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\act
 pip install -r requirements.txt
 export HF_TOKEN=...   # do NOT commit this
 python app.py
+```
 
 ## Screenshots
 ![Itinerary view](assets/itinerary.png)
